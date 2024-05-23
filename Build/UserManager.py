@@ -4,7 +4,7 @@ class UserManager:
     def __init__(self, System):
         self.users_ = []
         try:
-            with open("passengers.txt", "r", encoding='utf-8') as arquivo:
+            with open("Data/passengers.txt", "r", encoding='utf-8') as arquivo:
                 lines = arquivo.readlines()
                 for i in range(0, len(lines), 6):
                     user_data = {
@@ -36,7 +36,7 @@ class UserManager:
         raise ValueError("erro")
 
     def UpdatePassenger(self):
-        with open("passengers.txt", "w", encoding='utf-8') as arquivo:
+        with open("Data/passengers.txt", "w", encoding='utf-8') as arquivo:
             for user in self.users_:
                 profile_data = user.ReturnProfile()
                 arquivo.write(profile_data["name"] + "\n")
