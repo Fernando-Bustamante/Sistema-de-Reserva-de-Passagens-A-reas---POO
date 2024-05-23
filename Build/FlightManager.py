@@ -3,7 +3,7 @@ class FlightManager:
     def __init__(self):
         self.flights = []
         try:
-            with open("voos.txt", "r" ,encoding='utf-8') as arquivo:
+            with open("Data/voos.txt", "r" ,encoding='utf-8') as arquivo:
                 lines = arquivo.readlines()
                 for i in range(0, len(lines), 9):
                     flight = Flight()
