@@ -6,21 +6,35 @@ class UserManager:
         try:
             with open("Data/passengers.txt", "r", encoding='utf-8') as arquivo:
                 lines = arquivo.readlines()
-                for i in range(0, len(lines), 6):
-                    user_data = {
-                        'name': lines[i].strip(),
-                        'email': lines[i + 1].strip(),
-                        'password': lines[i + 2].strip(),
-                        'cpf': int(lines[i + 3].strip()),
-                        'credit_card': int(lines[i + 4].strip()),
-                        'flight_info': []
-                    }
-                    num_tickets = int(lines[i + 5].strip())
-                    for j in range(num_tickets):
-                        flight_line = lines[i + 6 + j].strip().split()
-                        user_data['flight_info'].append((int(flight_line[0]), int(flight_line[1])))
-                    user = User(user_data)
-                    self.users.append(user)
+                i = 0
+                while i < len(lines):
+                    if i + 5 >= len(lines):
+                        print(f"Dados incompletos para um usuário no arquivo na linha {i}")
+                        break
+                    try:
+                        name = lines[i].strip()
+                        email = lines[i + 1].strip()
+                        password = lines[i + 2].strip()
+                        cpf = int(lines[i + 3].strip())
+                        credit_card = int(lines[i + 4].strip())
+                        num_tickets = int(lines[i + 5].strip())
+                        flight_info = []
+                        i += 5
+                        for j in range(num_tickets):
+                            if i >= len(lines):
+                                print(f"Dados de voo incompletos para o usuário {name} na linha {i}")
+                                break
+                            flight_line = lines[i].strip().split()
+                            if len(flight_line) != 2:
+                                print(f"Dados de voo mal formatados para o usuário {name} na linha {i}")
+                                break
+                            flight_info.append((int(flight_line[0]), int(flight_line[1])))
+                            i += 1
+                        user = User(name, email, password, cpf, credit_card, flight_info)
+                        self.users_.append(user)
+                    except ValueError as ve:
+                        print(f"Erro de valor ao processar dados do usuário na linha {i}: {ve}")
+                        i += 6  # Pular para o próximo conjunto de dados
         except FileNotFoundError:
             print("Erro ao abrir o arquivo passengers.txt")
 
