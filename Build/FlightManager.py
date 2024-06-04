@@ -1,4 +1,4 @@
-from Flight import Flight
+from Build.Flight import Flight
 class FlightManager:
     def __init__(self):
         self.flights = []
