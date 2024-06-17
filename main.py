@@ -1,6 +1,6 @@
-from FlightManager import FlightManager
-from User import User
-from UserManager import UserManager
+from Build.FlightManager import FlightManager
+from Build.User import User
+from Build.UserManager import UserManager
 
 def displayMenu():
     print("  Aproveite nossas ofertas de passagens aéreas e programe toda a sua viagem com a GoldTrip. Aqui você vai encontrar diversas opções de voos para diversos lugares e com as melhores companhias aéreas nacionais e internacionais. Consulte todas as disponibilidades e realize sua compra de maneira fácil, rápida e sem precisar sair de casa. Além das melhores tarifas, na GoldTrip você encontra dicas para deixar sua viagem ainda mais completa. Não perca tempo, reserve agora mesmo sua passagem e embarque nessa nova aventura. Reserve suas passagens no maior e melhor sistema de reservas de passagens! Planejar sua próxima viagem nunca foi tão fácil!\n")
@@ -59,12 +59,12 @@ def main():
                         break
                     else:
                         print("Nome de usuário inválido.")
-                cpf = int(input("Adicione o CPF: "))
+                cpf = input("Adicione o CPF: ")
                 email = input("Digite um e-mail: ")
                 password = input("Digite sua senha: ")
-                cc = int(input("Digite o número do cartão de crédito: "))
+                cc = input("Digite o número do cartão de crédito: ")
                 usuario = User(name, email, password, cpf, cc, [])  # Criando um novo usuário com os dados fornecidos
-                SistemadeUsuario.addUser(usuario)
+                SistemadeUsuario.addUser((name, email, password, cpf, cc, []))  # Passando uma tupla com os dados do usuário
                 usuario = SistemadeUsuario.returnUser(name, password)
 
             # Se o usuário escolheu '0' para sair do login/cadastro, volta para o menu principal
@@ -97,7 +97,7 @@ def main():
                     codigo = int(input("Selecione seu voo pelo código: "))
                     if 1 <= codigo <= Sistema.manyFlights():
                         flightaux = Sistema.returnFlight(codigo)
-                        flightaux.printseats()
+                        flightaux.printSeats()
                         assento = int(input("Selecione um assento pelo número: "))
                         if 1 <= assento <= flightaux.flightSize() and not flightaux.seatCheck(assento):
                             usuario.buyTicket(codigo, assento, Sistema)
@@ -135,4 +135,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
