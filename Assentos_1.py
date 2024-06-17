@@ -9,7 +9,7 @@ root = tk.Tk()
 root.title("Seleção de Assento de Avião")
 
 # Carregando a imagem da cadeira e redimensionando
-image_path = "Assento.png"
+image_path = "Images.Assento.png"
 image = Image.open(image_path)
 
 # Redimensionar a imagem para caber 30 fileiras na tela
