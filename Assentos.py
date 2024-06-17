@@ -2,21 +2,21 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 
-def on_seat_click(row, col):
-    messagebox.showinfo("Seleção", f"Você selecionou o assento da fileira {row}, coluna {col}!")
+def on_seat_click(row, col_title):
+    messagebox.showinfo("Seleção", f"Você selecionou o assento da fileira {row}, coluna {col_title}!")
 
 root = tk.Tk()
 root.title("Seleção de Assento de Avião")
 
 # Carregando a imagem da cadeira e redimensionando
-image_path = "Images.Assento.png"
+image_path = "Assento.png"
 image = Image.open(image_path)
 
 # Redimensionar a imagem para caber 30 fileiras na tela
 new_height = 20  # altura desejada para cada cadeira
 aspect_ratio = image.width / image.height
 new_width = int(new_height * aspect_ratio)
-image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+image = image.resize((new_width, new_height), Image.LANCZOS)
 photo = ImageTk.PhotoImage(image)
 
 # Configuração do layout do avião
@@ -51,15 +51,17 @@ for row in range(num_rows):
 
 # Criando as cadeiras no Canvas
 current_col = 0
-for section in cols_layout:
+for section_index, section in enumerate(cols_layout):
     for row in range(num_rows):
         for col in range(section):
-            x = (current_col + col) * image_width + 40  # +40 para espaço para a numeração das fileiras
-            y = row * image_height + 20  # +20 para espaço para os títulos das colunas
-            # Adicionando a imagem da cadeira como um botão
-            button = tk.Button(canvas, image=photo, bd=0, highlightthickness=0,
-                               command=lambda row=row, col=current_col + col: on_seat_click(row + 1, column_titles[current_col + col]))
-            canvas.create_window(x, y, anchor=tk.NW, window=button)
+            absolute_col_index = sum(cols_layout[:section_index]) + col
+            if absolute_col_index < len(column_titles):
+                x = (current_col + col) * image_width + 40  # +40 para espaço para a numeração das fileiras
+                y = row * image_height + 20  # +20 para espaço para os títulos das colunas
+                button = tk.Button(canvas, image=photo, width=image_width, height=image_height,
+                                   bd=0, highlightthickness=0,
+                                   command=lambda row=row+1, col_title=column_titles[absolute_col_index]: on_seat_click(row, col_title))
+                canvas.create_window(x, y, anchor=tk.NW, window=button)
     current_col += section + 1  # Pula para a próxima seção, adicionando um espaço
 
 root.mainloop()
