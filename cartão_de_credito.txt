@@ -1,0 +1,4 @@
+1234567890123456,12345678900,[{"descricao": "Compra", "valor": 150.75}, {"descricao": "compra", "valor": 80.50}]
+6543210987654321,98765432100,[{"descricao": "Compra", "valor": 250.00}, {"descricao": "compra", "valor": 120.00}]
+1111222233334444,11111111111,[{"descricao": "compra", "valor": 3000.00}]
+5555666677778888,22222222222,[]
