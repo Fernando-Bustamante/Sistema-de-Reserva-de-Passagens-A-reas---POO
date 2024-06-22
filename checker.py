@@ -8,6 +8,7 @@ import re
 from datetime import datetime
 
 def verificar_cpf(cpf: str) -> bool:
+    cpf = cpf.replace('.', '').replace('-', '')
     # Verificar se o CPF tem 11 dígitos e é composto apenas de números
     if not cpf.isdigit() or len(cpf) != 11:
         return False
@@ -107,31 +108,6 @@ def verificar_telefone(telefone: str) -> bool:
     else:
         return False
     
-def normalizar_telefone(telefone: str) -> str:
-    # Remover espaços e parênteses
-    telefone = re.sub(r'[()\s]', '', telefone)
-    
-    # Remover zero inicial, se houver
-    if telefone.startswith('0'):
-        telefone = telefone[1:]
-    
-    # Extrair DDD e número
-    ddd = telefone[:2]
-    numero = telefone[2:]
-    
-    # Verificar se é número fixo ou celular
-    if len(numero) == 8:
-        numero_formatado = f"{numero[:4]}-{numero[4:]}"
-    elif len(numero) == 9:
-        numero_formatado = f"{numero[:5]}-{numero[5:]}"
-    else:
-        raise ValueError("Número de telefone inválido")
-    
-    # Formatar para o padrão (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
-    telefone_formatado = f"({ddd}) {numero_formatado}"
-    
-    return telefone_formatado
-    
 def verficar_data_nascimento(data: str) -> bool:
     # Verificar se o formato está correto usando regex
     if not re.match(r'^\d{2}/\d{2}/\d{4}$', data):
@@ -180,10 +156,6 @@ def verificar_cartao_credito(numero: str) -> bool:
     # O número do cartão é válido se a soma total for um múltiplo de 10
     return total % 10 == 0
 
-def normalizar_cartao_credito(numero: str) -> str:
-    # Remover todos os caracteres não numéricos
-    numero_normalizado = re.sub(r'\D', '', numero)
-    return numero_normalizado
 
 
     
