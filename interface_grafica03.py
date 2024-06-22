@@ -312,62 +312,42 @@ class Display:
             
     def set_passagens(self):
         self.clear_widgets()
-        self.passagem_button.grid(column=0, row=0, pady=10, padx=10, sticky="nw")
-
-        # Create a frame for the canvas with a scrollbar
-        container = tk.Frame(self.root)
-        container.grid(column=0, row=1, pady=10, padx=10, sticky="nsew")
-
-        canvas = tk.Canvas(container, borderwidth=0)
-        scrollbar = tk.Scrollbar(container, orient="vertical", command=canvas.yview)
-        self.scrollable_frame = tk.Frame(canvas)
+        
+        self.passagem_button.grid(column=1, row=1)
+        
+        # Canvas and Scrollbar
+        self.canvas = tk.Canvas(self.root)
+        self.scrollbar = tk.Scrollbar(self.root, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = tk.Frame(self.canvas)
 
         self.scrollable_frame.bind(
             "<Configure>",
-            lambda e: canvas.configure(
-                scrollregion=canvas.bbox("all")
+            lambda e: self.canvas.configure(
+                scrollregion=self.canvas.bbox("all")
             )
         )
 
-        canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-        canvas.configure(yscrollcommand=scrollbar.set)
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
 
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
-
-        ticket_font = tkfont.Font(family="Helvetica", size=10, weight="bold")
-        header_font = tkfont.Font(family="Helvetica", size=12, weight="bold")
+        self.canvas.grid(row=2, column=1, columnspan=2, sticky="nsew")
+        self.scrollbar.grid(row=2, column=3, sticky="ns")
 
         for passagem in self.__usuario.passagens:
-            frame = tk.Frame(self.scrollable_frame, borderwidth=2, relief="groove", padx=10, pady=10, bg="white")
-            frame.pack(pady=5, padx=10, fill="x", expand=True)
+            button = tk.Button(
+                self.scrollable_frame,
+                height=10,
+                width=20,
+                command=lambda inf=passagem.codigo_voo + ' ' + passagem.assentox + '' + passagem.assentoy: self.cancelar_passagem(inf),
+                text=f"Código do Voo: {passagem.codigo_voo}\nData: {passagem.data}\nHorário: {passagem.horario}\nModelo do Avião: {passagem.modelo_aviao}\nPortão de Embarque: {passagem.portao_embarque}\nOrigem: {passagem.cidade_origem}/{passagem.estado_origem}\nDestino: {passagem.cidade_destino}/{passagem.estado_destino}\nAssento: {passagem.assentox}{passagem.assentoy}"
+            )
+            self.passagens_button.append(button)
 
-            tk.Label(frame, text="Flight Ticket", font=header_font, bg="white").grid(row=0, column=0, columnspan=2, pady=(0, 10))
+        for i, button in enumerate(self.passagens_button):
+            button.grid(column=0, row=i, padx=5, pady=5)
+            
 
-            tk.Label(frame, text="Código do Voo:", font=ticket_font, bg="white").grid(row=1, column=0, sticky="w")
-            tk.Label(frame, text=passagem.codigo_voo, font=ticket_font, bg="white").grid(row=1, column=1, sticky="w")
-
-            tk.Label(frame, text="Data:", font=ticket_font, bg="white").grid(row=2, column=0, sticky="w")
-            tk.Label(frame, text=passagem.data, font=ticket_font, bg="white").grid(row=2, column=1, sticky="w")
-
-            tk.Label(frame, text="Horário:", font=ticket_font, bg="white").grid(row=3, column=0, sticky="w")
-            tk.Label(frame, text=passagem.horario, font=ticket_font, bg="white").grid(row=3, column=1, sticky="w")
-
-            tk.Label(frame, text="Origem:", font=ticket_font, bg="white").grid(row=4, column=0, sticky="w")
-            tk.Label(frame, text=f"{passagem.cidade_origem}/{passagem.estado_origem}", font=ticket_font, bg="white").grid(row=4, column=1, sticky="w")
-
-            tk.Label(frame, text="Destino:", font=ticket_font, bg="white").grid(row=5, column=0, sticky="w")
-            tk.Label(frame, text=f"{passagem.cidade_destino}/{passagem.estado_destino}", font=ticket_font, bg="white").grid(row=5, column=1, sticky="w")
-
-            tk.Label(frame, text="Portão de Embarque:", font=ticket_font, bg="white").grid(row=6, column=0, sticky="w")
-            tk.Label(frame, text=passagem.portao_embarque, font=ticket_font, bg="white").grid(row=6, column=1, sticky="w")
-
-            tk.Label(frame, text="Modelo do Avião:", font=ticket_font, bg="white").grid(row=7, column=0, sticky="w")
-            tk.Label(frame, text=passagem.modelo_aviao, font=ticket_font, bg="white").grid(row=7, column=1, sticky="w")
-
-            tk.Label(frame, text="Assento:", font=ticket_font, bg="white").grid(row=8, column=0, sticky="w")
-            tk.Label(frame, text=f"{passagem.assentox}{passagem.assentoy}", font=ticket_font, bg="white").grid(row=8, column=1, sticky="w")
- 
+       
     def set_comprar_passagem(self):
         self.clear_widgets()
         self.buy_return_button.grid(column=1, row=1)
