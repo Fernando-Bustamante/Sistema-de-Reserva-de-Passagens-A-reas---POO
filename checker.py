@@ -149,6 +149,9 @@ def verificar_data(data: str) -> bool:
         # Tentar converter a string para um objeto datetime
         data = datetime.strptime(data, '%d/%m/%Y')
         
+        if data <= datetime.now():
+            return False
+        
         # Verificar se a data faz sentido (ex: não pode ser 31/02/2020)
         data_formatada = data.strftime('%d/%m/%Y')
         if data != data_formatada:
@@ -184,6 +187,8 @@ def verificar_cartao_credito(numero: str) -> bool:
     # O número do cartão é válido se a soma total for um múltiplo de 10
     return total % 10 == 0
 
+if __name__ == "__main__":
+    print(verificar_data("03/05/2025"))
 
 
     

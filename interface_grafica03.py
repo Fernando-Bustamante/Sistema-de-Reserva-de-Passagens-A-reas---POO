@@ -136,8 +136,10 @@ class Display:
             #limpa as lists
         for button in self.passagens_button:
             button.destroy()
-        
         self.passagens_button.clear()
+        for button in self.passagens_comprar_button:
+            button.destroy()
+        self.passagens_comprar_button.clear()
 
         #limpa as entrys a cada passagem de tela
         self.e1.delete(0 ,tk.END)
@@ -343,7 +345,7 @@ class Display:
                 self.scrollable_frame,
                 height=10,
                 width=20,
-                command=lambda inf=passagem.codigo_voo + ' ' + passagem.assentox + '' + passagem.assentoy: self.cancelar_passagem(inf),
+                command=lambda inf=passagem.codigo_voo +';'+ passagem.assentox +';'+ passagem.assentoy: self.cancelar_passagem(inf),
                 text=f"Código do Voo: {passagem.codigo_voo}\nData: {passagem.data}\nHorário: {passagem.horario}\nModelo do Avião: {passagem.modelo_aviao}\nPortão de Embarque: {passagem.portao_embarque}\nOrigem: {passagem.cidade_origem}/{passagem.estado_origem}\nDestino: {passagem.cidade_destino}/{passagem.estado_destino}\nAssento: {passagem.assentox}{passagem.assentoy}"
             )
             self.passagens_button.append(button)
@@ -356,6 +358,7 @@ class Display:
         if result == 'yes':
             print(inf)
             self.UManager.excluir_passagem(self.__usuario.cpf,self.__usuario.cartao_credito , inf)
+            self.FManager.autualizar_voo()
             self.set_main()
             
             

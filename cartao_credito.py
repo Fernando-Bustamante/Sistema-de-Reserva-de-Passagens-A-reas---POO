@@ -91,6 +91,7 @@ class GerenciadorCartaoDeCredito:
                 if sucesso:
                     self.atualizar_arquivo()
                 return sucesso
+        print("Não excluiu")
         return False
 
     def listar_operacoes(self, numero_cartao: str) -> List[Dict[str, Union[str, float]]]:

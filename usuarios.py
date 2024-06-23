@@ -60,7 +60,8 @@ class Usuario:
         for p in self.passagens:
             if p.codigo_voo==codigo_voo and p.assentox==assentox and p.assentoy==assentoy:
                 self.passagens.remove(p)
-            print("nao excluiu2")
+                return None
+        print("nao excluiu2")
 
     def listar_passagens(self) -> List[Dict[str, str]]:
         return [passagem.to_dict() for passagem in self.passagens]
@@ -306,9 +307,11 @@ class UsuarioManager:
         if(self.__ccmananger.excluir_operacao(numero_cc , cpf_usuario , inf)):
             for u in self.__usuarios:
                 if u.cartao_credito==numero_cc and u.cpf==cpf_usuario :
-                    info=inf.split(',')
+                    info=inf.split(';')
                     u.remover_passagem(info[0], info[1], info[2])
-            print("nao excluiu")
+                    self.atualizar_arquivo_usuarios()
+                    return None
+        print("nao excluiu")
                     
             
     

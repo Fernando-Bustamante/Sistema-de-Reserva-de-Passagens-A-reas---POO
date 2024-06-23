@@ -77,13 +77,10 @@ class gerenciador_voos:
                 L.append(v['config'])
         return L
         
-    def comprar_passagem(self):
-        # Implement logic to buy a ticket
-        pass
-    
-    def excluir_passagem(self):
-        # Implement logic to delete a ticket/passenger
-        pass
+    def autualizar_voo(self)-> None:
+        for v in self.__voos:
+            v['ocupacao']=self.UM.ocupacao(v['config']['codigo_voo'])
+            
                         
 if __name__ == "__main__":
     root = tk.Tk()
