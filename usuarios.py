@@ -55,6 +55,12 @@ class Usuario:
 
     def adicionar_passagem(self, passagem: Passagem) -> None:
         self.passagens.append(passagem)
+        
+    def remover_passagem(self, codigo_voo: str, assentox: str, assentoy: str) -> None:
+        for p in self.passagens:
+            if p.codigo_voo==codigo_voo and p.assentox==assentox and p.assentoy==assentoy:
+                self.passagens.remove(p)
+            print("nao excluiu2")
 
     def listar_passagens(self) -> List[Dict[str, str]]:
         return [passagem.to_dict() for passagem in self.passagens]
@@ -81,8 +87,6 @@ class Usuario:
     def comparar_senha(self, senha: str) -> bool:
         return self.senha == senha
 
-    def modificar(self) -> None:
-        pass  # Modify as needed
 
 class UsuarioManager:
     def __init__(self, arquivo_usuarios: str = "", CCM: GerenciadorCartaoDeCredito = GerenciadorCartaoDeCredito()):
@@ -156,7 +160,7 @@ class UsuarioManager:
             return False
 
         # Verifica se a data de nascimento é válida
-        if not ck.verficar_data_nascimento(data_nascimento):
+        if not ck.verificar_data_nascimento(data_nascimento):
             messagebox.showerror("Erro", "Data de nascimento inválida")
             return False
 
@@ -177,7 +181,7 @@ class UsuarioManager:
         
         # Verifica se o cartão de crédito é válido
         if not self.__ccmananger.cartao_existe(cartao_credito, cpf) :
-            messagebox.showerror("Erro", "Cartão de crédito inválido")
+            messagebox.showerror("Erro", "Cartão de crédito não é do usuario")
             return False
         
 
@@ -226,7 +230,7 @@ class UsuarioManager:
         validation_checks = [
             (ck.verificar_nome_completo, nome, "Nome inválido"),
             (ck.verificar_cpf, cpf, "CPF inválido"),
-            (ck.verficar_data_nascimento, data_nascimento, "Data de nascimento inválida"),
+            (ck.verificar_data_nascimento, data_nascimento, "Data de nascimento inválida"),
             (ck.verificar_email, email, "E-mail inválido"),
             (ck.verificar_endereco, endereco, "Endereço inválido"),
             (ck.verificar_cartao_credito, cartao_credito, "Cartão de crédito inválido"),
@@ -240,7 +244,7 @@ class UsuarioManager:
             
         # Verifica se o cartão de crédito é válido
         if  not (cartao_credito=="" or self.__ccmananger.cartao_existe(cartao_credito, cpf)):
-            messagebox.showerror("Erro", "Cartão de crédito inválido")
+            messagebox.showerror("Erro", "Cartão de crédito não é do usuario")
             return False
         
         if cpf and cpf != cpf_inicial and any(usuario.cpf == cpf for usuario in self.__usuarios):
@@ -298,8 +302,15 @@ class UsuarioManager:
             print("Usuário não encontrado")
             return False
         
-    def excluir_passagem(self, cpf_usuario: str, passagem: Passagem) -> None:
-        12
+    def excluir_passagem(self, cpf_usuario: str, numero_cc: str , inf: str) -> None:
+        if(self.__ccmananger.excluir_operacao(numero_cc , cpf_usuario , inf)):
+            for u in self.__usuarios:
+                if u.cartao_credito==numero_cc and u.cpf==cpf_usuario :
+                    info=inf.split(',')
+                    u.remover_passagem(info[0], info[1], info[2])
+            print("nao excluiu")
+                    
+            
     
     def atualizar_arquivo_usuarios(self) -> None:
         try:

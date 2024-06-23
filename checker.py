@@ -8,7 +8,6 @@ import re
 from datetime import datetime
 
 def verificar_cpf(cpf: str) -> bool:
-    cpf = cpf.replace('.', '').replace('-', '')
     # Verificar se o CPF tem 11 dígitos e é composto apenas de números
     if not cpf.isdigit() or len(cpf) != 11:
         return False
@@ -98,6 +97,17 @@ def verificar_endereco(endereco: str) -> bool:
     
     return True
 
+def verificar_cidade(endereco: str) -> bool:
+    if not re.match(r'^[A-Za-z\s]+$', endereco):
+        return False
+    return  True
+
+def verificar_estado(endereco: str) -> bool:
+    if not re.match(r'^[A-Za-z]{2}$', endereco):
+        return False
+    
+    return True
+
 def verificar_telefone(telefone: str) -> bool:
     # Expressão regular para verificar os formatos de telefone
     regex = r'^(0?\d{2}|\(\d{2}\))\s?\d{4,5}-\d{4}$'
@@ -108,7 +118,7 @@ def verificar_telefone(telefone: str) -> bool:
     else:
         return False
     
-def verficar_data_nascimento(data: str) -> bool:
+def verificar_data_nascimento(data: str) -> bool:
     # Verificar se o formato está correto usando regex
     if not re.match(r'^\d{2}/\d{2}/\d{4}$', data):
         return False
@@ -123,6 +133,24 @@ def verficar_data_nascimento(data: str) -> bool:
         
         # Verificar se a data faz sentido (ex: não pode ser 31/02/2020)
         data_formatada = data_nascimento.strftime('%d/%m/%Y')
+        if data != data_formatada:
+            return False
+    except ValueError:
+        return False
+    
+    return True
+
+def verificar_data(data: str) -> bool:
+    # Verificar se o formato está correto usando regex
+    if not re.match(r'^\d{2}/\d{2}/\d{4}$', data):
+        return False
+    
+    try:
+        # Tentar converter a string para um objeto datetime
+        data = datetime.strptime(data, '%d/%m/%Y')
+        
+        # Verificar se a data faz sentido (ex: não pode ser 31/02/2020)
+        data_formatada = data.strftime('%d/%m/%Y')
         if data != data_formatada:
             return False
     except ValueError:

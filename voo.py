@@ -19,6 +19,7 @@ class gerenciador_voos:
         self.__voos: List[Dict[str,Union[Dict[str, str], List[str]]]] = []   
         self.__carregar__voos("dados/voos.txt")
         self.aviao=Airbus320(root)
+        self.configuracao:str = ""
 
     
     def __carregar__voos(self, arquivo_voos: str):
@@ -61,6 +62,20 @@ class gerenciador_voos:
     def __adicionar_passagem(self):
         # Implement logic to add a ticket/passenger
         pass
+    
+    def Procurar_voo(self, data:str, c_origem:str, e_origem:str, c_destino:str, e_destino:str) -> bool:
+        for v in self.__voos:
+            if v['config']['cidade_origem']==c_origem and v['config']['estado_origem']==e_origem and v['config']['cidade_destino']==c_destino and v['config']['estado_destino']==e_destino:
+                self.__atual_configuracao=v['config']['codigo_voo']
+                return True
+        return False
+    
+    def Listar_voos(self, data:str, c_origem:str, e_origem:str, c_destino:str, e_destino:str) -> List[Dict[str, str]]:
+        L :List[Dict[str, str]]= []
+        for v in self.__voos:
+            if v['config']['cidade_origem']==c_origem and v['config']['estado_origem']==e_origem and v['config']['cidade_destino']==c_destino and v['config']['estado_destino']==e_destino:
+                L.append(v['config'])
+        return L
         
     def comprar_passagem(self):
         # Implement logic to buy a ticket
