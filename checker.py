@@ -147,13 +147,15 @@ def verificar_data(data: str) -> bool:
     
     try:
         # Tentar converter a string para um objeto datetime
-        data = datetime.strptime(data, '%d/%m/%Y')
+        data_obj = datetime.strptime(data, '%d/%m/%Y')
         
-        if data <= datetime.now():
+        # Verificar se a data não é no passado
+        if data_obj <= datetime.now():
             return False
-        
+
         # Verificar se a data faz sentido (ex: não pode ser 31/02/2020)
-        data_formatada = data.strftime('%d/%m/%Y')
+        # Ao converter e reformatar, a data deve permanecer a mesma
+        data_formatada = data_obj.strftime('%d/%m/%Y')
         if data != data_formatada:
             return False
     except ValueError:
