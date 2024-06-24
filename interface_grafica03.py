@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 12 11:02:47 2024
 
-@author: Eduardo
-"""
 
 import tkinter as tk
 from usuarios import UsuarioManager, Usuario, Passagem
@@ -28,14 +24,12 @@ class Display:
                 'senha': ""
             }
         self.__usuario=Usuario()
-        #self.aviao=Plane(root)
         
         # começa a rodar o codigo
         self.initialize_widgets()
         self.set_start()
         
-    def initialize_widgets(self):
-        #my_scrollbar = tk.Scrollbar(self.root, orient=tk.VERTICAL)
+    def initialize_widgets(self)-> None:
         # Start screen widgets
         self.mylabel1 = tk.Label(self.root, text="Aproveite nossas ofertas de passagens aéreas e programe toda a sua viagem com a GoldTrip. Aqui você vai encontrar diversas opções de voos para diversos lugares e com as melhores companhias aéreas nacionais.")
         self.mylabel2 = tk.Label(self.root, text="Consulte todas as disponibilidades e realize sua compra de maneira fácil, rápida e sem precisar sair de casa. Além das melhores tarifas, na GoldTrip você encontra dicas para deixar sua viagem ainda mais completa.")
@@ -113,6 +107,7 @@ class Display:
         self.buy_label1 = tk.Label(self.root, text="cidade,Estado(reduzido) de origem:")
         self.buy_e1 = tk.Entry(self.root, width=50)
         self.buy_label2 = tk.Label(self.root, text="cidade,Estado(reduzido) de destino:")
+        self.buy_label21= tk.Label(self.root, text="Obs.: sem espaco fora se tiver no meio do nome das cidades")
         self.buy_e2 = tk.Entry(self.root, width=50)
         self.buy_label3 = tk.Label(self.root, text="data(DD/MM/AAAA):")
         self.buy_e3 = tk.Entry(self.root, width=50)
@@ -129,7 +124,7 @@ class Display:
         self.mybutton14 = tk.Button(self.root, text="Deslogar", command=self.set_start)
         self.mybutton15 = tk.Button(self.root, text="Sair", command=self.root.destroy)
 
-    def clear_widgets(self):
+    def clear_widgets(self)-> None:
         for widget in self.root.winfo_children():
             widget.pack_forget()
             widget.grid_forget()
@@ -167,13 +162,16 @@ class Display:
         self.config_e9.delete(0 ,tk.END)
         
 
-    def set_start(self):
+    def set_start(self)-> None:
         self.__usuario=Usuario()
         self.__user = {
                 'nome': "",
                 'cpf': "",
                 'senha': ""
             }
+        self.buy_e1.delete(0 ,tk.END)
+        self.buy_e2.delete(0 ,tk.END)
+        self.buy_e3.delete(0 ,tk.END)
         self.clear_widgets()
         self.mylabel1.pack()
         self.mylabel2.pack()
@@ -183,7 +181,7 @@ class Display:
         self.mybutton02.pack()
         self.mybutton03.pack()
 
-    def set_logar(self):
+    def set_logar(self)-> None:
         self.clear_widgets()
         self.mylabel11.grid(column=1, row=1)
         self.e1.grid(column=2, row=1)
@@ -194,7 +192,7 @@ class Display:
         self.button04.grid(column=1, row=4)
         self.button05.grid(column=3, row=4)
 
-    def check_logar(self):
+    def check_logar(self)-> None:
         if self.UManager.checar_usuario(self.e1.get(), self.e2.get(), self.e3.get()):
            self.__usuario=self.UManager.retornar_usuario(self.e1.get(), self.e2.get(), self.e3.get())
            #print(self.__usuario.to_dict())
@@ -205,7 +203,7 @@ class Display:
            self.textmain.set(self.__user['nome'] +",o que deseja fazer agora?")
            self.set_main()
 
-    def set_cadastrar(self):
+    def set_cadastrar(self)-> None:
         self.clear_widgets()
         self.reg_label11.grid(column=1, row=1)
         self.reg_e1.grid(column=2, row=1)
@@ -229,7 +227,7 @@ class Display:
         self.reg_button04.grid(column=1, row=11)
         self.reg_button05.grid(column=3, row=11)
 
-    def check_cadastrar(self):
+    def check_cadastrar(self)-> None:
        if self.UManager.adicionar_usuario(
             self.reg_e1.get(),
             self.reg_e2.get(),
@@ -250,8 +248,11 @@ class Display:
            self.textmain.set(self.__user['nome'] +",o que deseja fazer agora?")
            self.set_main()
 
-    def set_main(self):
+    def set_main(self)-> None:
         self.clear_widgets()
+        self.buy_e1.delete(0 ,tk.END)
+        self.buy_e2.delete(0 ,tk.END)
+        self.buy_e3.delete(0 ,tk.END)
         #self.__usuario=
         self.mylabel21.pack()
         self.mybutton11.pack()
@@ -260,10 +261,12 @@ class Display:
         self.mybutton14.pack()
         self.mybutton15.pack()
         
-    def set_config(self):
+    def set_config(self)-> None:
         self.clear_widgets()
         self.config_e1.insert(0, self.__usuario.nome)
+        self.config_e1.configure(state="disabled")
         self.config_e2.insert(0, self.__usuario.cpf)
+        self.config_e2.configure(state="disabled")
         self.config_e3.insert(0, self.__usuario.data_nascimento)
         self.config_e4.insert(0, self.__usuario.email)
         self.config_e5.insert(0, self.__usuario.endereco)
@@ -292,7 +295,7 @@ class Display:
         self.config_button1.grid(column=1, row=11)
         self.config_button2.grid(column=3, row=11)
         
-    def check_config(self):
+    def check_config(self) -> None:
         if(self.UManager.modificar_usuario(nome_inicial=self.__user['nome'],
                                         cpf_inicial=self.__user['cpf'],
                                         senha_inicial=self.__user['senha'],
@@ -317,7 +320,7 @@ class Display:
             self.__usuario=self.UManager.retornar_usuario(self.__user['nome'],self.__user['cpf'],self.__user['senha'])
             self.set_main()
         
-    def set_passagens(self):
+    def set_passagens(self) -> None:
         self.clear_widgets()
         
         self.passagem_button.grid(column=1, row=1)
@@ -344,7 +347,7 @@ class Display:
             button = tk.Button(
                 self.scrollable_frame,
                 height=10,
-                width=20,
+                width=25,
                 command=lambda inf=passagem.codigo_voo +';'+ passagem.assentox +';'+ passagem.assentoy: self.cancelar_passagem(inf),
                 text=f"Código do Voo: {passagem.codigo_voo}\nData: {passagem.data}\nHorário: {passagem.horario}\nModelo do Avião: {passagem.modelo_aviao}\nPortão de Embarque: {passagem.portao_embarque}\nOrigem: {passagem.cidade_origem}/{passagem.estado_origem}\nDestino: {passagem.cidade_destino}/{passagem.estado_destino}\nAssento: {passagem.assentox}{passagem.assentoy}"
             )
@@ -353,7 +356,7 @@ class Display:
         for i, button in enumerate(self.passagens_button):
             button.grid(column=0, row=i, padx=5, pady=5)
             
-    def cancelar_passagem(self, inf: str):
+    def cancelar_passagem(self, inf: str) -> None:
         result = tk.messagebox.askquestion("Cancelamento", "Você realmente deseja cancelar essa passagem?")
         if result == 'yes':
             print(inf)
@@ -362,47 +365,75 @@ class Display:
             self.set_main()
             
             
-    def set_comprar_passagem(self):
+    def set_comprar_passagem(self) -> None:
         self.clear_widgets()
         self.buy_return_button.grid(column=1, row=1)
         self.buy_label1.grid(column=2, row=2)
         self.buy_e1.grid(column=3, row=2)
         self.buy_label2.grid(column=2, row=3)
+        self.buy_label21.grid(column=2, row=4)
         self.buy_e2.grid(column=3, row=3)
-        self.buy_label3.grid(column=2, row=4)
-        self.buy_e3.grid(column=3, row=4)
-        self.buy_try.grid(column=4, row=5)
+        self.buy_label3.grid(column=2, row=5)
+        self.buy_e3.grid(column=3, row=5)
+        self.buy_try.grid(column=4, row=6)
         
     def set_procurar_passagem(self) -> None:
         end1=(self.buy_e1.get()).split(',')
         end2=(self.buy_e2.get()).split(',')
-        if not ck.verificar_cidade(end1[0]):
+        if not ck.verificar_cidade(end1[0].strip()):
             messagebox.showerror("Erro", "cidade de origem invalida")
             return None
-        elif not ck.verificar_estado(end1[1]):
+        elif not ck.verificar_estado(end1[1].strip()):
             messagebox.showerror("Erro", "estado de origem invalido")
             return None
-        elif not ck.verificar_cidade(end2[0]):
+        elif not ck.verificar_cidade(end2[0].strip()):
             messagebox.showerror("Erro", "cidade de destino invalida")
             return None
-        elif not ck.verificar_estado(end2[1]):
+        elif not ck.verificar_estado(end2[1].strip()):
             messagebox.showerror("Erro", "estado de destino invalido")
             return None
         elif not ck.verificar_data(self.buy_e3.get()):
             messagebox.showerror("Erro", "data invalida")
             return None
-        if(self.FManager.Procurar_voo(data=self.buy_e3.get(), c_origem=end1[0], e_origem=end1[1], c_destino=end2[0], e_destino=end2[1])):
-            for button in self.passagens_comprar_button:
-                button.destroy()
-            self.passagens_comprar_button.clear()
-            self.passagens_comprar=self.FManager.Listar_voos(data=self.buy_e3.get(), c_origem=end1[0], e_origem=end1[1], c_destino=end2[0], e_destino=end2[1])
+        
+        
+        if self.FManager.Procurar_voo(data=self.buy_e3.get(), c_origem=end1[0].strip(), e_origem=end1[1].strip(), c_destino=end2[0].strip(), e_destino=end2[1].strip()):
+           for button in self.passagens_comprar_button:
+               button.destroy()
+           self.passagens_comprar_button.clear()
+           self.passagens_comprar = self.FManager.Listar_voos(data=self.buy_e3.get(), c_origem=end1[0], e_origem=end1[1], c_destino=end2[0], e_destino=end2[1])
+
+           for i, passagem in enumerate(self.passagens_comprar):
+               button = tk.Button(
+                   self.root,
+                   height=10,
+                   width=25,
+                   command=lambda inf=passagem['codigo_voo']: self.comprar_passagem(inf),
+                   text=f"Código do Voo: {passagem['codigo_voo']}\nData: {passagem['data']}\n Valor: {passagem['valor']}\nHorário: {passagem['horario']}\nModelo do Avião: {passagem['modelo_aviao']}\nPortão de Embarque: {passagem['portao_embarque']}\nOrigem: {passagem['cidade_origem']}/{passagem['estado_origem']}\nDestino: {passagem['cidade_destino']}/{passagem['estado_destino']}"
+               )
+               self.passagens_comprar_button.append(button)
+               button.grid(column=5+int(i/3), row=i + 6, padx=5, pady=5)
         else:
-            messagebox.showinfo("Indisponivel", "Infelizmente nao possuimos passagem para esse dia e rota")
+           messagebox.showinfo("Indisponível", "Infelizmente não possuímos passagem para esse dia e rota")
+            
+    def comprar_passagem(self, codigo:str) -> None:
+        result = messagebox.askquestion( "","Você deseja comprar um assento nesse voo mesmo?")
+        if result == 'yes':
+            info=self.FManager.get_informacao_voo(codigo)
+            self.clear_widgets()
+            seat=self.FManager.get_aviao(codigo).comprar_passagem()
+            if seat:
+                assento=seat.split(',')
+                p=Passagem(codigo_voo=info['codigo_voo'], data=info['data'], horario=info['horario'], modelo_aviao=info['modelo_aviao'], portao_embarque=info['portao_embarque'], cidade_origem=info['cidade_origem'], estado_origem=info['estado_origem'], cidade_destino=info['cidade_destino'], estado_destino=info['estado_destino'], assentox=assento[0] , assentoy=assento[1])
+                self.UManager.adicionar_passagem(self.__user['cpf'], p,info['valor'])
+                self.FManager.autualizar_voo()
+                self.set_main()
+                self.UManager.atualizar_arquivo_usuarios()
+            else:
+                self.set_comprar_passagem()
+                
         
-    def set_aviao(self):
-        12
-        #self.aviao.create_plane_widget()
-        
+    
 
 if __name__ == "__main__":
     root = tk.Tk()

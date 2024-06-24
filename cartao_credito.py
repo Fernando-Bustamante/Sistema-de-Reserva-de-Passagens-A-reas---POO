@@ -38,9 +38,6 @@ class GerenciadorCartaoDeCredito:
             print(f"Cartão {numero_cartao} já existe.")
 
     def __carregar_cartoes(self) -> None:
-        if self.arquivo_cartoes == "":
-            print("CCM vazio")
-            return None
         try:
             with open(self.arquivo_cartoes, 'r') as file:
                 linhas = file.readlines()
@@ -75,14 +72,15 @@ class GerenciadorCartaoDeCredito:
         except Exception as e:
             print(f"Erro ao atualizar o arquivo: {e}")
 
-    def adicionar_operacao(self, numero_cartao: str, cpf: str, descricao: str, valor: float) -> None:
+    def adicionar_operacao(self, numero_cartao: str, cpf: str, descricao: str, valor: float) -> bool:
         for cartao in self.cartoes:
             if cartao.numero == numero_cartao and cartao.cpf == cpf:
                 cartao.adicionar_operacao(descricao, valor)
                 self.atualizar_arquivo()
                 print(f"Operação adicionada ao cartão {numero_cartao}.")
-                return
+                return True
         print(f"Cartão {numero_cartao} não encontrado.")
+        return False
 
     def excluir_operacao(self, numero_cartao: str, cpf: str, descricao: str) -> bool:
         for cartao in self.cartoes:
@@ -113,6 +111,5 @@ class GerenciadorCartaoDeCredito:
 
 if __name__ == "__main__":
     ccmanager = GerenciadorCartaoDeCredito("dados/cartão_de_credito.txt")
-    #print(ccmanager.listar_cartoes())
-    ccmanager.excluir_operacao("1234-5678-9101-1121","12", "vsf")
+    ccmanager.listar_cartoes()
     ccmanager.atualizar_arquivo()

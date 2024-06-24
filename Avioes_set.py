@@ -1,25 +1,21 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jun 17 20:30:50 2024
-
-@author: Eduardo
-"""
 
 import tkinter as tk
 from tkinter import messagebox
-from typing import List, Dict
 from PIL import Image, ImageTk
+from typing import List, Optional
 
-class Airbus320:
-    def __init__(self, root: tk.Tk):
+class Aviao:
+    def __init__(self, root: tk.Tk, num_rows: int, cols_layout: List[int], column_titles: List[str]):
         self.root = root
         self.canvas = None
         self.photo = None
-        self.num_rows = 30
-        self.cols_layout = [3, 3]  # Definindo a estrutura 3-3
-        self.column_titles = ['A', 'B', 'C', ' ', 'D', 'E', 'F']
-        self.ocupacao = [[False for _ in range(len(self.column_titles))] for _ in range(self.num_rows)]  # Inicializa todos os assentos como livres
+        self.num_rows = num_rows
+        self.cols_layout = cols_layout
+        self.column_titles = column_titles
+        self.ocupacao = [[False for _ in range(len(self.column_titles))] for _ in range(self.num_rows)]
         self.selected_seat = ""
+        self.return_button = None  # Botão "Retornar"
         self.load_image()
         self.calculate_dimensions()
 
@@ -68,10 +64,10 @@ class Airbus320:
         # Criando o Canvas com o tamanho calculado
         self.canvas = tk.Canvas(self.root, width=self.canvas_width, height=self.canvas_height)
         self.canvas.pack(pady=20)
-        
-        #reiniciando selected_seat
-        self.selected_seat=""
 
+        #reiniciando selected_seat
+        self.selected_seat=None
+        
         # Desenhando os títulos das colunas
         current_col = 0
         for section_index, section in enumerate(self.cols_layout):
@@ -85,6 +81,7 @@ class Airbus320:
             y = row * self.image_height + self.image_height // 2 + 20  # +20 para espaço para os títulos das colunas
             self.canvas.create_text(20, y, text=str(row + 1), font=('Arial', 8, 'bold'))
 
+        # Criando o botão "Retornar"
         self.return_button = tk.Button(self.root, text="Retornar", command=self.destroy_plane_widget)
         x_button = 20  # posição x corrigida
         y_button = 0
@@ -118,13 +115,3 @@ class Airbus320:
         self.create_plane_widget()
         self.root.wait_window(self.canvas)  # Espera até que o canvas seja destruído
         return self.selected_seat
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    plane = Airbus320(root)
-    selected_seat = plane.comprar_passagem()
-    if selected_seat:
-        print(f"Assento selecionado: {selected_seat}")
-    else:
-        print("Nenhum assento selecionado.")
-    root.mainloop()

@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 12 10:29:19 2024
 
-@author: Eduardo
-"""
 import re
 from datetime import datetime
 
@@ -98,12 +94,14 @@ def verificar_endereco(endereco: str) -> bool:
     return True
 
 def verificar_cidade(endereco: str) -> bool:
-    if not re.match(r'^[A-Za-z\s]+$', endereco):
+    end=endereco.strip()
+    if not re.match(r'^[A-Za-z\s]+$', end):
         return False
     return  True
 
 def verificar_estado(endereco: str) -> bool:
-    if not re.match(r'^[A-Za-z]{2}$', endereco):
+    end=endereco.strip()
+    if not re.match(r'^[A-Za-z]{2}$', end):
         return False
     
     return True

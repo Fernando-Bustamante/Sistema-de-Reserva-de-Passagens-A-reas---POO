@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jun 20 07:24:55 2024
 
-@author: Eduardo
-"""
 import tkinter as tk
 from typing import List, Dict,Union, Tuple
-from aviões.Airbus320 import Airbus320
+#from aviões.Airbus320 import Airbus320
+from aviões.Avioes_config import Airbus320,Boeing777
+from aviões.Avioes_set import Aviao
 from cartao_credito import GerenciadorCartaoDeCredito
 from usuarios import UsuarioManager
 from typing import Type
@@ -18,7 +16,8 @@ class gerenciador_voos:
         self.UM = UM
         self.__voos: List[Dict[str,Union[Dict[str, str], List[str]]]] = []   
         self.__carregar__voos("dados/voos.txt")
-        self.aviao=Airbus320(root)
+        self.avioes:Dict[str,Aviao]= {'Airbus320':Airbus320(root),'Boeing777':Boeing777(root)}
+        self.aviao:Aviao 
         self.configuracao:str = ""
 
     
@@ -40,7 +39,7 @@ class gerenciador_voos:
                         'estado_destino': dados[8].strip(),
                         'valor': dados[9].strip(),
                     }
-                    # Instantiate Airbus320 assuming correct usage of arguments
+                    # instancie infas informacoes do aviao
                     self.__voos.append({"config":v,"ocupacao":self.UM.ocupacao(dados[0].strip())})
 
         except FileNotFoundError:
@@ -50,18 +49,20 @@ class gerenciador_voos:
     
     def to_dict(self):
         for i in self.__voos:
-            print(i['config']['codigo_voo'] + i['config']['data'])
+            print(i['config']['codigo_voo'] +""+ i['config']['data'])
             
-    def get_aviao(self, codigo: str) -> Airbus320:#chama e configura o aviao a ser usado
+    def get_aviao(self, codigo: str) -> Aviao: #chama e configura o aviao a ser usado
         for v in self.__voos:
             if v['config']['codigo_voo'] == codigo:
+                self.aviao=self.avioes[v['config']['modelo_aviao']]
                 self.aviao.set_seat(v['ocupacao'])
                 return self.aviao
         return None  # Return None if not found
     
-    def __adicionar_passagem(self):
-        # Implement logic to add a ticket/passenger
-        pass
+    def get_informacao_voo(self, codigo:str) -> Dict[str,str]:
+        for v in self.__voos:
+            if v['config']['codigo_voo']==codigo:
+                return v['config']
     
     def Procurar_voo(self, data:str, c_origem:str, e_origem:str, c_destino:str, e_destino:str) -> bool:
         for v in self.__voos:

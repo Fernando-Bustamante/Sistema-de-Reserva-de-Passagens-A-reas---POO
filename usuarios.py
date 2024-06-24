@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jun 13 10:14:16 2024
 
-@author: Eduardo
-"""
 
 import tkinter as tk
 from tkinter import messagebox
@@ -61,7 +57,6 @@ class Usuario:
             if p.codigo_voo==codigo_voo and p.assentox==assentox and p.assentoy==assentoy:
                 self.passagens.remove(p)
                 return None
-        print("nao excluiu2")
 
     def listar_passagens(self) -> List[Dict[str, str]]:
         return [passagem.to_dict() for passagem in self.passagens]
@@ -196,9 +191,6 @@ class UsuarioManager:
             messagebox.showerror("Erro", "Senhas diferentes")
             return False 
         
-        # Normaliza o telefone
-        #telefone = ck.normalizar_telefone(telefone)
-        
         # Cria um novo usuário
         novo_usuario = Usuario(nome, cpf, data_nascimento, email, endereco, telefone, cartao_credito, senha)
         
@@ -284,7 +276,7 @@ class UsuarioManager:
     def listar_usuarios(self) -> List[Dict[str, str]]:
         return [usuario.to_dict() for usuario in self.__usuarios]
     
-    def adicionar_passagem(self, cpf_usuario: str, passagem: Passagem) -> None:
+    def adicionar_passagem(self, cpf_usuario: str, passagem: Passagem, valor: str) -> None:
         """
         Adiciona uma passagem a um usuário específico.
 
@@ -297,11 +289,14 @@ class UsuarioManager:
         """
         usuario = next((u for u in self.__usuarios if u.cpf == cpf_usuario), None)
         if usuario:
-            usuario.adicionar_passagem(passagem)
-            return True
+            None
         else:
             print("Usuário não encontrado")
-            return False
+            return None
+        if self.__ccmananger.adicionar_operacao(usuario.cartao_credito , usuario.cpf , passagem.codigo_voo+';'+passagem.assentox+';'+passagem.assentoy , valor):
+            usuario.adicionar_passagem(passagem)
+            self.atualizar_arquivo_usuarios()
+            
         
     def excluir_passagem(self, cpf_usuario: str, numero_cc: str , inf: str) -> None:
         if(self.__ccmananger.excluir_operacao(numero_cc , cpf_usuario , inf)):
