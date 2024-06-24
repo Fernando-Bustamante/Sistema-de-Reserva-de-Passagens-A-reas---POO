@@ -5,13 +5,15 @@ Created on Wed Jun 12 11:02:47 2024
 @author: Eduardo
 """
 
-from tkinter import font as tkfont
 import tkinter as tk
 from usuarios import UsuarioManager, Usuario, Passagem
 from typing import List, Dict
 from cartao_credito import GerenciadorCartaoDeCredito
 from aviões.Airbus320 import Airbus320
+from tkinter import messagebox
+from tkinter import font as tkfont
 from voo import gerenciador_voos
+import checker as ck
 
 class Display:
     def __init__(self, root: tk.Tk):
@@ -112,9 +114,11 @@ class Display:
         self.buy_e1 = tk.Entry(self.root, width=50)
         self.buy_label2 = tk.Label(self.root, text="cidade,Estado(reduzido) de destino:")
         self.buy_e2 = tk.Entry(self.root, width=50)
-        self.buy_label3 = tk.Label(self.root, text="data:")
+        self.buy_label3 = tk.Label(self.root, text="data(DD/MM/AAAA):")
         self.buy_e3 = tk.Entry(self.root, width=50)
         self.buy_try=tk.Button(self.root, text="Opções", command=self.set_procurar_passagem)
+        self.passagens_comprar_button:List[tk.Button] =[]
+        self.passagens_comprar:List[Dict[str,str]] = []
         
         # Main screen widgets
         self.textmain = tk.StringVar(self.root, self.__user['nome'] +",o que deseja fazer agora?")
@@ -132,8 +136,10 @@ class Display:
             #limpa as lists
         for button in self.passagens_button:
             button.destroy()
-            
         self.passagens_button.clear()
+        for button in self.passagens_comprar_button:
+            button.destroy()
+        self.passagens_comprar_button.clear()
 
         #limpa as entrys a cada passagem de tela
         self.e1.delete(0 ,tk.END)
@@ -159,6 +165,7 @@ class Display:
         self.config_e7.delete(0 ,tk.END)
         self.config_e8.delete(0 ,tk.END)
         self.config_e9.delete(0 ,tk.END)
+        
 
     def set_start(self):
         self.__usuario=Usuario()
@@ -309,7 +316,7 @@ class Display:
             self.UManager.atualizar_arquivo_usuarios()
             self.__usuario=self.UManager.retornar_usuario(self.__user['nome'],self.__user['cpf'],self.__user['senha'])
             self.set_main()
-            
+        
     def set_passagens(self):
         self.clear_widgets()
         
@@ -338,7 +345,7 @@ class Display:
                 self.scrollable_frame,
                 height=10,
                 width=20,
-                command=lambda inf=passagem.codigo_voo + ' ' + passagem.assentox + '' + passagem.assentoy: self.cancelar_passagem(inf),
+                command=lambda inf=passagem.codigo_voo +';'+ passagem.assentox +';'+ passagem.assentoy: self.cancelar_passagem(inf),
                 text=f"Código do Voo: {passagem.codigo_voo}\nData: {passagem.data}\nHorário: {passagem.horario}\nModelo do Avião: {passagem.modelo_aviao}\nPortão de Embarque: {passagem.portao_embarque}\nOrigem: {passagem.cidade_origem}/{passagem.estado_origem}\nDestino: {passagem.cidade_destino}/{passagem.estado_destino}\nAssento: {passagem.assentox}{passagem.assentoy}"
             )
             self.passagens_button.append(button)
@@ -346,8 +353,15 @@ class Display:
         for i, button in enumerate(self.passagens_button):
             button.grid(column=0, row=i, padx=5, pady=5)
             
-
-       
+    def cancelar_passagem(self, inf: str):
+        result = tk.messagebox.askquestion("Cancelamento", "Você realmente deseja cancelar essa passagem?")
+        if result == 'yes':
+            print(inf)
+            self.UManager.excluir_passagem(self.__usuario.cpf,self.__usuario.cartao_credito , inf)
+            self.FManager.autualizar_voo()
+            self.set_main()
+            
+            
     def set_comprar_passagem(self):
         self.clear_widgets()
         self.buy_return_button.grid(column=1, row=1)
@@ -360,7 +374,46 @@ class Display:
         self.buy_try.grid(column=4, row=5)
         
     def set_procurar_passagem(self):
-        12
+       self.clear_widgets()
+       self.buy_return_button = tk.Button(self.root, text="Retornar", command=self.set_comprar_passagem)
+       self.buy_return_button.grid(row=0, column=0)
+
+       end1 = self.buy_e1.get().split(',')
+       end2 = self.buy_e2.get().split(',')
+       if not ck.verificar_cidade(end1[0]):
+           messagebox.showerror("Erro", "Cidade de origem inválida")
+           return None
+       elif not ck.verificar_estado(end1[1]):
+           messagebox.showerror("Erro", "Estado de origem inválido")
+           return None
+       elif not ck.verificar_cidade(end2[0]):
+           messagebox.showerror("Erro", "Cidade de destino inválida")
+           return None
+       elif not ck.verificar_estado(end2[1]):
+           messagebox.showerror("Erro", "Estado de destino inválido")
+           return None
+       elif not ck.verificar_data(self.buy_e3.get()):
+           messagebox.showerror("Erro", "Data inválida")
+           return None
+
+       if self.FManager.Procurar_voo(data=self.buy_e3.get(), c_origem=end1[0], e_origem=end1[1], c_destino=end2[0], e_destino=end2[1]):
+           for button in self.passagens_comprar_button:
+               button.destroy()
+           self.passagens_comprar_button.clear()
+           self.passagens_comprar = self.FManager.Listar_voos(data=self.buy_e3.get(), c_origem=end1[0], e_origem=end1[1], c_destino=end2[0], e_destino=end2[1])
+
+           for i, passagem in enumerate(self.passagens_comprar):
+               button = tk.Button(
+                   self.root,
+                   height=10,
+                   width=20,
+                   command=lambda inf=passagem: self.comprar_passagem(inf),
+                   text=f"Código do Voo: {passagem['codigo_voo']}\nData: {passagem['data']}\nHorário: {passagem['horario']}\nModelo do Avião: {passagem['modelo_aviao']}\nPortão de Embarque: {passagem['portao_embarque']}\nOrigem: {passagem['cidade_origem']}/{passagem['estado_origem']}\nDestino: {passagem['cidade_destino']}/{passagem['estado_destino']}"
+               )
+               self.passagens_comprar_button.append(button)
+               button.grid(column=0, row=i + 1, padx=5, pady=5)
+       else:
+           messagebox.showinfo("Indisponível", "Infelizmente não possuímos passagem para esse dia e rota")
         
     def set_aviao(self):
         12
