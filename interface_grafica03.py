@@ -151,6 +151,10 @@ class Display:
         self.reg_e8.delete(0 ,tk.END)
         self.reg_e9.delete(0 ,tk.END)
         
+        self.config_e2.configure(state="normal")
+        self.config_e2.configure(state="normal")
+        self.config_e2.configure(state="normal")
+        
         self.config_e1.delete(0 ,tk.END)
         self.config_e2.delete(0 ,tk.END)
         self.config_e3.delete(0 ,tk.END)
@@ -268,6 +272,7 @@ class Display:
         self.config_e2.insert(0, self.__usuario.cpf)
         self.config_e2.configure(state="disabled")
         self.config_e3.insert(0, self.__usuario.data_nascimento)
+        self.config_e3.configure(state="disabled")
         self.config_e4.insert(0, self.__usuario.email)
         self.config_e5.insert(0, self.__usuario.endereco)
         self.config_e6.insert(0, self.__usuario.telefone)
