@@ -12,13 +12,16 @@ from PIL import Image, ImageTk
 from typing import List, Optional
 from aviao import aviao
 
-class Plane:
-    def __init__(self, root: tk.Tk) -> None:
+class Boeing777:
+    def __init__(self, root: tk.Tk):
         self.root: tk.Tk = root
         self.root.title("Seleção de Assento de Avião")
         self.canvas: Optional[tk.Canvas] = None
         self.photo: Optional[ImageTk.PhotoImage] = None
+        self.load_image()
         
+        
+    def load_image(self):
         # Carregando a imagem da cadeira e redimensionando
         image_path: str = "Images/Assento.png"
         image: Image.Image = Image.open(image_path)
@@ -90,7 +93,7 @@ class Plane:
 if __name__ == "__main__":
     root = tk.Tk()
 
-    plane = Plane(root)
+    plane = Boeing777(root)
 
     # Create and pack the plane widget
     def create() -> None:
