@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 12 10:29:19 2024
 
-@author: Eduardo
-"""
 import re
 from datetime import datetime
 
@@ -97,6 +93,19 @@ def verificar_endereco(endereco: str) -> bool:
     
     return True
 
+def verificar_cidade(endereco: str) -> bool:
+    end=endereco.strip()
+    if not re.match(r'^[A-Za-z\s]+$', end):
+        return False
+    return  True
+
+def verificar_estado(endereco: str) -> bool:
+    end=endereco.strip()
+    if not re.match(r'^[A-Za-z]{2}$', end):
+        return False
+    
+    return True
+
 def verificar_telefone(telefone: str) -> bool:
     # Expressão regular para verificar os formatos de telefone
     regex = r'^(0?\d{2}|\(\d{2}\))\s?\d{4,5}-\d{4}$'
@@ -107,32 +116,7 @@ def verificar_telefone(telefone: str) -> bool:
     else:
         return False
     
-def normalizar_telefone(telefone: str) -> str:
-    # Remover espaços e parênteses
-    telefone = re.sub(r'[()\s]', '', telefone)
-    
-    # Remover zero inicial, se houver
-    if telefone.startswith('0'):
-        telefone = telefone[1:]
-    
-    # Extrair DDD e número
-    ddd = telefone[:2]
-    numero = telefone[2:]
-    
-    # Verificar se é número fixo ou celular
-    if len(numero) == 8:
-        numero_formatado = f"{numero[:4]}-{numero[4:]}"
-    elif len(numero) == 9:
-        numero_formatado = f"{numero[:5]}-{numero[5:]}"
-    else:
-        raise ValueError("Número de telefone inválido")
-    
-    # Formatar para o padrão (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
-    telefone_formatado = f"({ddd}) {numero_formatado}"
-    
-    return telefone_formatado
-    
-def verficar_data_nascimento(data: str) -> bool:
+def verificar_data_nascimento(data: str) -> bool:
     # Verificar se o formato está correto usando regex
     if not re.match(r'^\d{2}/\d{2}/\d{4}$', data):
         return False
@@ -147,6 +131,29 @@ def verficar_data_nascimento(data: str) -> bool:
         
         # Verificar se a data faz sentido (ex: não pode ser 31/02/2020)
         data_formatada = data_nascimento.strftime('%d/%m/%Y')
+        if data != data_formatada:
+            return False
+    except ValueError:
+        return False
+    
+    return True
+
+def verificar_data(data: str) -> bool:
+    # Verificar se o formato está correto usando regex
+    if not re.match(r'^\d{2}/\d{2}/\d{4}$', data):
+        return False
+    
+    try:
+        # Tentar converter a string para um objeto datetime
+        data_obj = datetime.strptime(data, '%d/%m/%Y')
+        
+        # Verificar se a data não é no passado
+        if data_obj <= datetime.now():
+            return False
+
+        # Verificar se a data faz sentido (ex: não pode ser 31/02/2020)
+        # Ao converter e reformatar, a data deve permanecer a mesma
+        data_formatada = data_obj.strftime('%d/%m/%Y')
         if data != data_formatada:
             return False
     except ValueError:
@@ -180,10 +187,8 @@ def verificar_cartao_credito(numero: str) -> bool:
     # O número do cartão é válido se a soma total for um múltiplo de 10
     return total % 10 == 0
 
-def normalizar_cartao_credito(numero: str) -> str:
-    # Remover todos os caracteres não numéricos
-    numero_normalizado = re.sub(r'\D', '', numero)
-    return numero_normalizado
+if __name__ == "__main__":
+    print(verificar_data("03/05/2025"))
 
 
     
