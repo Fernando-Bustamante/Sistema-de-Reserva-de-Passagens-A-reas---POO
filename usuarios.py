@@ -1,17 +1,11 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jun 13 10:14:16 2024
 
-@author: Eduardo
-"""
 
 import tkinter as tk
 from tkinter import messagebox
 from typing import List, Dict
 import checker as ck
-#from cartao_credito import GerenciadorCartaoDeCredito
-import copy as cp
-
+from cartao_credito import GerenciadorCartaoDeCredito
 
 class Passagem:
     def __init__(self, codigo_voo: str, data: str, horario: str, modelo_aviao: str, portao_embarque: str,
@@ -44,7 +38,7 @@ class Passagem:
         }
 
 class Usuario:
-    def __init__(self, nome:str = "", cpf:str= "", data_nascimento:str= "", email:str= "", endereco:str= "", telefone:str= "", cartao_credito:str= "", senha:str= ""):
+    def __init__(self, nome: str = "", cpf: str= "", data_nascimento: str= "", email: str= "", endereco: str= "", telefone: str= "", cartao_credito: str= "", senha: str= ""):
         self.nome = nome
         self.cpf = cpf
         self.data_nascimento = data_nascimento
@@ -54,9 +48,15 @@ class Usuario:
         self.cartao_credito = cartao_credito
         self.senha = senha  # Consider hashing the password in real applications
         self.passagens: List[Passagem] = []
-    
+
     def adicionar_passagem(self, passagem: Passagem) -> None:
         self.passagens.append(passagem)
+        
+    def remover_passagem(self, codigo_voo: str, assentox: str, assentoy: str) -> None:
+        for p in self.passagens:
+            if p.codigo_voo==codigo_voo and p.assentox==assentox and p.assentoy==assentoy:
+                self.passagens.remove(p)
+                return None
 
     def listar_passagens(self) -> List[Dict[str, str]]:
         return [passagem.to_dict() for passagem in self.passagens]
@@ -69,81 +69,57 @@ class Usuario:
             'email': self.email,
             'endereco': self.endereco,
             'telefone': self.telefone,
-            'cartao': self.cartao_credito,
+            'cartao_credito': self.cartao_credito,
             'senha': self.senha,
-            'passagens': self.listar_passagens(),  # Corrected method call
+            'passagens': self.listar_passagens(),
         }
-    
-    def comparar_cpf(self,cpf:str) -> bool:
-        return self.cpf==cpf
-    
-    def comparar_nome(self,nome:str) -> bool:
-        return self.nome==nome
-    
-    def comparar_senha(self,senha:str) -> bool:
-        return self.senha==senha
-    
-    def modificar(self) -> None:
-        12
-    
+
+    def comparar_cpf(self, cpf: str) -> bool:
+        return self.cpf == cpf
+
+    def comparar_nome(self, nome: str) -> bool:
+        return self.nome == nome
+
+    def comparar_senha(self, senha: str) -> bool:
+        return self.senha == senha
+
+
 class UsuarioManager:
-    def __init__(self, root: tk.Tk, arquivo_usuarios: str):
+    def __init__(self, arquivo_usuarios: str = "", CCM: GerenciadorCartaoDeCredito = GerenciadorCartaoDeCredito()):
         self.__usuarios: List[Usuario] = []
-        #self.__ccmananger = GerenciadorCartaoDeCredito()
-        self.__usuarios.append(Usuario(nome="Eduardo", cpf="12", data_nascimento="01/01/1990",
-                                       email="eduardo@example.com", endereco="Rua ABC, 123",
-                                       telefone="(11) 99999-9999", cartao_credito="1234-5678-9101-1121", senha="1234"))
-        passagem1 = Passagem(
-    codigo_voo="AA101",
-    data="2024-07-15",
-    horario="08:30",
-    modelo_aviao="Airbus A320",
-    portao_embarque="B15",
-    cidade_origem="New York",
-    estado_origem="NY",
-    cidade_destino="Los Angeles",
-    estado_destino="CA",
-    assentox="14",
-    assentoy="A") 
-        passagem2 = Passagem(
-    codigo_voo="BB202",
-    data="2024-08-20",
-    horario="12:45",
-    modelo_aviao="Boeing 747",
-    portao_embarque="C22",
-    cidade_origem="Miami",
-    estado_origem="FL",
-    cidade_destino="Chicago",
-    estado_destino="IL",
-    assentox="22",
-    assentoy="B"
-         )
-        self.__usuarios[0].passagens.append(passagem1)
-        self.__usuarios[0].passagens.append(passagem2)
+        self.__ccmananger = CCM
+        self.arquivo_usuarios=arquivo_usuarios
         self.__carregar_usuarios_do_arquivo(arquivo_usuarios)
-        self.root = root
-    
+
     def __carregar_usuarios_do_arquivo(self, arquivo_usuarios: str) -> None:
         try:
             with open(arquivo_usuarios, 'r') as file:
                 linhas = file.readlines()
-                usuario = None
-                for linha in linhas:
-                    dados = linha.strip().split(';')
-                    if len(dados) == 8:  # Linha de usuário
-                        if usuario:
-                            self.__usuarios.append(usuario)
-                        usuario = Usuario(*dados)
-                    elif len(dados) == 11:  # Linha de passagem
-                        if usuario:
-                            passagem = Passagem(*dados)
-                            usuario.adicionar_passagem(passagem)
-                if usuario:
+                i = 0
+                while i < len(linhas):
+                    partes = linhas[i].strip().split(';')
+                    nome = partes[0]
+                    cpf = partes[1]
+                    data_nascimento = partes[2]
+                    email = partes[3]
+                    endereco = partes[4]
+                    telefone = partes[5]
+                    cartao_credito = partes[6]
+                    senha = partes[7]
+                    qpassagem = int(partes[8])
+                    passagens: List[Passagem] = []
+                    for j in range(qpassagem):
+                        p = linhas[i + 1 + j].strip().split(';')
+                        passagens.append(Passagem(codigo_voo=p[0], data=p[1], horario=p[2], modelo_aviao=p[3], portao_embarque=p[4], cidade_origem=p[5], estado_origem=p[6], cidade_destino=p[7], estado_destino=p[8], assentox=p[9], assentoy=p[10]))
+                    usuario = Usuario(nome, cpf, data_nascimento, email, endereco, telefone, cartao_credito, senha)
+                    usuario.passagens.extend(passagens)
                     self.__usuarios.append(usuario)
+                    i += qpassagem + 1
+                    
         except FileNotFoundError:
-            messagebox.showerror("Erro", "Arquivo de usuários não encontrado")
+            print("Erro", "Arquivo de usuários não encontrado")
         except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao ler arquivo de usuários: {e}")
+            print("Erro", f"Erro ao ler arquivo de usuários: {e}")
             
     def adicionar_usuario(self, nome: str, cpf: str, data_nascimento: str, email: str, endereco: str, telefone: str, cartao_credito: str, senha: str, re_senha: str) -> bool:
         """
@@ -180,7 +156,7 @@ class UsuarioManager:
             return False
 
         # Verifica se a data de nascimento é válida
-        if not ck.verficar_data_nascimento(data_nascimento):
+        if not ck.verificar_data_nascimento(data_nascimento):
             messagebox.showerror("Erro", "Data de nascimento inválida")
             return False
 
@@ -198,6 +174,12 @@ class UsuarioManager:
         if not ck.verificar_cartao_credito(cartao_credito):
             messagebox.showerror("Erro", "Cartão de crédito inválido")
             return False
+        
+        # Verifica se o cartão de crédito é válido
+        if not self.__ccmananger.cartao_existe(cartao_credito, cpf) :
+            messagebox.showerror("Erro", "Cartão de crédito não é do usuario")
+            return False
+        
 
         # Verifica se o telefone é válido
         if not ck.verificar_telefone(telefone):
@@ -208,9 +190,6 @@ class UsuarioManager:
         if senha != re_senha:
             messagebox.showerror("Erro", "Senhas diferentes")
             return False 
-        
-        # Normaliza o telefone
-        telefone = ck.normalizar_telefone(telefone)
         
         # Cria um novo usuário
         novo_usuario = Usuario(nome, cpf, data_nascimento, email, endereco, telefone, cartao_credito, senha)
@@ -231,106 +210,58 @@ class UsuarioManager:
             return False
         return True
     
-    def adicionar_passagem(self, cpf_usuario: str, passagem: Passagem) -> bool:
-        """
-        Adiciona uma passagem a um usuário específico.
-
-        Args:
-            cpf_usuario (str): CPF do usuário.
-            passagem (Passagem): Passagem a ser adicionada.
-
-        Returns:
-            bool: True se a passagem foi adicionada com sucesso, False caso contrário.
-        """
-        usuario = next((u for u in self.__usuarios if u.cpf == cpf_usuario), None)
-        if usuario:
-            usuario.adicionar_passagem(passagem)
-            return True
-        else:
-            messagebox.showerror("Erro", "Usuário não encontrado")
-            return False
         
-    def modificar_usuario(self,nome_inicial: str, cpf_inicial: str, senha_inicial:str, nome: str, cpf: str
-                          , data_nascimento: str, email: str, endereco: str, telefone: str
-                          , cartao_credito: str, senha: str, nova_senha: str) -> bool:
+    def modificar_usuario(self, nome_inicial: str, cpf_inicial: str, senha_inicial: str, nome: str, cpf: str,
+                      data_nascimento: str, email: str, endereco: str, telefone: str,
+                      cartao_credito: str, senha: str, nova_senha: str) -> bool:
+        u = self.retornar_usuario(nome_inicial, cpf_inicial, senha_inicial)
         
-        u=self.retornar_usuario(nome_inicial, cpf_inicial, senha_inicial)
-        if u==Usuario():
-            messagebox.showerror("Erro", "Não há usuario")
-            return False
-        # Verifica se o nome é válido
-        if not (ck.verificar_nome_completo(nome) or nome==""):
-            messagebox.showerror("Erro", "Nome inválido")
+        if u is None:  # Assuming retornar_usuario returns None if user is not found
+            messagebox.showerror("Erro", "Não há usuário")
             return False
 
-        # Verifica se o CPF é válido
-        if not (ck.verificar_cpf(cpf) or cpf==""):
-            messagebox.showerror("Erro", "CPF inválido")
-            return False
-
-        # Verifica se o CPF já foi utilizado
-        if not (cpf==cpf_inicial or cpf==""):
-            if any(usuario.cpf == cpf for usuario in self.__usuarios):
-                 messagebox.showerror("Erro", "CPF já foi utilizado")
-                 return False
-
-        # Verifica se a data de nascimento é válida
-        if not (ck.verficar_data_nascimento(data_nascimento) or data_nascimento==""):
-            messagebox.showerror("Erro", "Data de nascimento inválida")
-            return False
-
-        # Verifica se o e-mail é válido
-        if not (ck.verificar_email(email) or email==""):
-            messagebox.showerror("Erro", "E-mail inválido")
-            return False
-
-        # Verifica se o endereço é válido
-        if not (ck.verificar_endereco(endereco) or endereco==""):
-            messagebox.showerror("Erro", "Endereço inválido")
-            return False
-
+        validation_checks = [
+            (ck.verificar_nome_completo, nome, "Nome inválido"),
+            (ck.verificar_cpf, cpf, "CPF inválido"),
+            (ck.verificar_data_nascimento, data_nascimento, "Data de nascimento inválida"),
+            (ck.verificar_email, email, "E-mail inválido"),
+            (ck.verificar_endereco, endereco, "Endereço inválido"),
+            (ck.verificar_cartao_credito, cartao_credito, "Cartão de crédito inválido"),
+            (ck.verificar_telefone, telefone, "Telefone inválido")
+        ]
+        
+        for check, value, error_message in validation_checks:
+            if value and not check(value):
+                messagebox.showerror("Erro", error_message)
+                return False
+            
         # Verifica se o cartão de crédito é válido
-        if not (ck.verificar_cartao_credito(cartao_credito) or cartao_credito==""):
-            messagebox.showerror("Erro", "Cartão de crédito inválido")
+        if  not (cartao_credito=="" or self.__ccmananger.cartao_existe(cartao_credito, cpf)):
+            messagebox.showerror("Erro", "Cartão de crédito não é do usuario")
             return False
-
-        # Verifica se o telefone é válido
-        if not (ck.verificar_telefone(telefone) or telefone==""):
-            messagebox.showerror("Erro", "Telefone inválido")
+        
+        if cpf and cpf != cpf_inicial and any(usuario.cpf == cpf for usuario in self.__usuarios):
+            messagebox.showerror("Erro", "CPF já foi utilizado")
             return False
-
-        # Verifica se as senhas coincidem
+        
         if senha != senha_inicial:
             messagebox.showerror("Erro", "Senha incorreta")
-            return False 
+            return False
+
+        updates = {
+            'nome': nome,
+            'cpf': cpf,
+            'data_nascimento': data_nascimento,
+            'email': email,
+            'endereco': endereco,
+            'telefone': telefone,
+            'cartao_credito': cartao_credito,
+            'senha': nova_senha if nova_senha else u.senha
+        }
         
-        # Normaliza o telefone
-        telefone = ck.normalizar_telefone(telefone)
-        
-     
-        if not nome=="":
-            u.nome=nome
-
-        if not cpf=="":
-            u.cpf=cpf
-
-        if not data_nascimento=="":
-            u.data_nascimento=data_nascimento
-
-        if not  email=="":
-            u.email=email
-
-        if not endereco=="":
-            u.endereco=endereco
-
-        if not cartao_credito=="":
-            u.cartao_credito=cartao_credito
-
-        if telefone=="":
-            u.telefone=telefone
-
-        if not nova_senha==""  :
-            u.senha=nova_senha
+        for attribute, value in updates.items():
+            if value:
+                setattr(u, attribute, value)
         
         return True
         
@@ -345,14 +276,63 @@ class UsuarioManager:
     def listar_usuarios(self) -> List[Dict[str, str]]:
         return [usuario.to_dict() for usuario in self.__usuarios]
     
-    def salvar_usuarios_no_arquivo(self, arquivo_usuarios: str) -> None:
+    def adicionar_passagem(self, cpf_usuario: str, passagem: Passagem, valor: str) -> None:
+        """
+        Adiciona uma passagem a um usuário específico.
+
+        Args:
+            cpf_usuario (str): CPF do usuário.
+            passagem (Passagem): Passagem a ser adicionada.
+
+        Returns:
+            bool: True se a passagem foi adicionada com sucesso, False caso contrário.
+        """
+        usuario = next((u for u in self.__usuarios if u.cpf == cpf_usuario), None)
+        if usuario:
+            None
+        else:
+            print("Usuário não encontrado")
+            return None
+        if self.__ccmananger.adicionar_operacao(usuario.cartao_credito , usuario.cpf , passagem.codigo_voo+';'+passagem.assentox+';'+passagem.assentoy , valor):
+            usuario.adicionar_passagem(passagem)
+            self.atualizar_arquivo_usuarios()
+            
+        
+    def excluir_passagem(self, cpf_usuario: str, numero_cc: str , inf: str) -> None:
+        if(self.__ccmananger.excluir_operacao(numero_cc , cpf_usuario , inf)):
+            for u in self.__usuarios:
+                if u.cartao_credito==numero_cc and u.cpf==cpf_usuario :
+                    info=inf.split(';')
+                    u.remover_passagem(info[0], info[1], info[2])
+                    self.atualizar_arquivo_usuarios()
+                    return None
+        print("nao excluiu")
+                    
+            
+    
+    def atualizar_arquivo_usuarios(self) -> None:
         try:
-            with open(arquivo_usuarios, 'w') as file:
+            with open(self.arquivo_usuarios, 'w') as file:
                 for usuario in self.__usuarios:
-                    file.write(';'.join(usuario.to_dict().values()) + '\n')
+                    linha_usuario = f"{usuario.nome};{usuario.cpf};{usuario.data_nascimento};{usuario.email};{usuario.endereco};{usuario.telefone};{usuario.cartao_credito};{usuario.senha};{len(usuario.passagens)}\n"
+                    file.write(linha_usuario)
+                    for passagem in usuario.passagens:
+                        linha_passagem = f"{passagem.codigo_voo};{passagem.data};{passagem.horario};{passagem.modelo_aviao};{passagem.portao_embarque};{passagem.cidade_origem};{passagem.estado_origem};{passagem.cidade_destino};{passagem.estado_destino};{passagem.assentox};{passagem.assentoy}\n"
+                        file.write(linha_passagem)
+        except FileNotFoundError:
+            print("Erro", "Arquivo de usuários não encontrado")
         except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao salvar usuários no arquivo: {e}")
-"""   
-root=tk.Tk()
-u=UsuarioManager(root, "dados/usuarios.txt")
-"""
+            print("Erro", f"Erro ao atualizar arquivo de usuários: {e}")
+            
+    def ocupacao(self, codigo: str ="") -> List[str]:
+        config =[]
+        for usuario in self.__usuarios:
+            for p in usuario.passagens:
+                if p.codigo_voo==codigo:
+                    config.append(p.assentox+","+p.assentoy)
+        return config
+
+if __name__ == "__main__":
+    u=UsuarioManager( arquivo_usuarios= "dados/usuarios.txt")
+    print(u.listar_usuarios())
+    u.atualizar_arquivo_usuarios()
