@@ -18,7 +18,7 @@ class Display:
         self.root = root  # Janela principal do tkinter
         self.CCManager = GerenciadorCartaoDeCredito("dados/cartão_de_credito.txt")  # Gerenciador de cartão de crédito
         self.UManager = UsuarioManager("dados/usuarios.txt", self.CCManager)  # Gerenciador de usuários
-        self.FManager = gerenciador_voos(root, self.UManager, self.CCManager)  # Gerenciador de voos
+        self.FManager = gerenciador_voos(root, self.UManager)  # Gerenciador de voos
         self.__user: List[str, str] = {
                 'nome': "",
                 'cpf': "",
