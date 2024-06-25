@@ -207,15 +207,9 @@ class UsuarioManager:
             return False
         return True
     
-    # Exclui um usuário com o nome, CPF e senha fornecidos
-    def excluir_usuario(self, nome: str, cpf: str, senha: str) -> None:
-        # Verifica se o usuário existe antes de excluir
-        if not self.checar_usuario(nome, cpf, senha):
-            return None
-        self.__usuarios = [u for u in self.__usuarios if not (u.comparar_nome(nome) and u.comparar_cpf(cpf) and u.comparar_senha(senha))]
     
     # Altera as informações de um usuário específico
-    def alterar_usuario(self, nome_inicial: str, cpf_inicial: str, senha_inicial: str, nome: str = "", cpf: str = "", data_nascimento: str = "", email: str = "", endereco: str = "", telefone: str = "", cartao_credito: str = "", senha: str = "", nova_senha: str = "") -> bool:
+    def modificar_usuario(self, nome_inicial: str, cpf_inicial: str, senha_inicial: str, nome: str = "", cpf: str = "", data_nascimento: str = "", email: str = "", endereco: str = "", telefone: str = "", cartao_credito: str = "", senha: str = "", nova_senha: str = "") -> bool:
         
         # Retorna o usuário correspondente ao nome, CPF e senha fornecidos
         u = self.retornar_usuario(nome_inicial, cpf_inicial, senha_inicial)
