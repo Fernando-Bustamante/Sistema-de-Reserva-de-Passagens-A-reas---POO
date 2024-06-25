@@ -152,9 +152,9 @@ class Display:
         self.reg_e8.delete(0 ,tk.END)
         self.reg_e9.delete(0 ,tk.END)
         
+        self.config_e1.configure(state="normal")
         self.config_e2.configure(state="normal")
-        self.config_e2.configure(state="normal")
-        self.config_e2.configure(state="normal")
+        self.config_e3.configure(state="normal")
         
         self.config_e1.delete(0 ,tk.END)
         self.config_e2.delete(0 ,tk.END)
