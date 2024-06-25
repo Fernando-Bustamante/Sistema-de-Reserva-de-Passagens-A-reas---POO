@@ -16,8 +16,8 @@ class Airbus320:
         self.load_image()
         self.calculate_dimensions()
 
+    # Método para carregar a imagem do assento e redimensioná-la
     def load_image(self):
-        # Carregando a imagem da cadeira e redimensionando
         image_path = "Images/Assento.png"
         try:
             image = Image.open(image_path)
@@ -25,7 +25,7 @@ class Airbus320:
             print("Imagem do assento não encontrada.")
             return
 
-        # Redimensionar a imagem para caber 30 fileiras na tela
+        # Redimensiona a imagem para caber 30 fileiras na tela
         new_height = 20  # altura desejada para cada cadeira
         aspect_ratio = image.width / image.height
         new_width = int(new_height * aspect_ratio)
@@ -33,12 +33,13 @@ class Airbus320:
         self.photo = ImageTk.PhotoImage(image)
         self.image_width, self.image_height = image.size
 
+    # Método para calcular as dimensões do canvas
     def calculate_dimensions(self):
-        # Calcula as dimensões do canvas
         self.num_cols = sum(self.cols_layout) + (len(self.cols_layout) - 1)  # Somando colunas e espaços
         self.canvas_width = self.num_cols * self.image_width + 40  # +40 para espaço para a numeração das fileiras
         self.canvas_height = self.num_rows * self.image_height + 20  # +20 para espaço para os títulos das colunas
 
+    # Método chamado quando um assento é clicado
     def on_seat_click(self, row, col_title):
         result = messagebox.askquestion("Seleção", f"Você selecionou o assento da fileira {row}, coluna {col_title}! \n Deseja esse assento mesmo?")
         if result == 'yes':
@@ -47,6 +48,7 @@ class Airbus320:
         else:
             self.selected_seat = None
 
+    # Método para configurar os assentos ocupados
     def set_seat(self, ocupacao: List[str]) -> None:
         self.ocupacao = [[False for _ in range(len(self.column_titles))] for _ in range(self.num_rows)]
         for assento in ocupacao:
@@ -56,14 +58,13 @@ class Airbus320:
             col_index = self.column_titles.index(col)
             self.ocupacao[row][col_index] = True
 
-
+    # Método para criar o widget de seleção de assentos
     def create_plane_widget(self):
-        # Criando o Canvas com o tamanho calculado
         self.canvas = tk.Canvas(self.root, width=self.canvas_width, height=self.canvas_height)
         self.canvas.pack(pady=20)
         
-        #reiniciando selected_seat
-        self.selected_seat=""
+        # Reiniciando selected_seat
+        self.selected_seat = ""
 
         # Desenhando os títulos das colunas
         current_col = 0
@@ -78,8 +79,9 @@ class Airbus320:
             y = row * self.image_height + self.image_height // 2 + 20  # +20 para espaço para os títulos das colunas
             self.canvas.create_text(20, y, text=str(row + 1), font=('Arial', 8, 'bold'))
 
+        # Botão para retornar
         self.return_button = tk.Button(self.root, text="Retornar", command=self.destroy_plane_widget)
-        x_button = 20  # posição x corrigida
+        x_button = 20
         y_button = 0
         self.return_button.place(x=x_button, y=y_button)
 
@@ -99,6 +101,7 @@ class Airbus320:
                             self.canvas.create_window(x, y, anchor=tk.NW, window=button)
             current_col += section + 1  # Pula para a próxima seção, adicionando um espaço
 
+    # Método para destruir o widget de seleção de assentos
     def destroy_plane_widget(self):
         if self.canvas:
             self.canvas.destroy()
@@ -107,6 +110,7 @@ class Airbus320:
             self.return_button.destroy()
             self.return_button = None
 
+    # Método para iniciar o processo de compra de passagem
     def comprar_passagem(self):
         self.create_plane_widget()
         self.root.wait_window(self.canvas)  # Espera até que o canvas seja destruído
