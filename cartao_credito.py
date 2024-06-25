@@ -1,4 +1,3 @@
-
 from typing import List, Dict, Union
 
 class CartaoDeCredito:
@@ -6,14 +5,17 @@ class CartaoDeCredito:
         self.numero = numero
         self.cpf = cpf
         self.operacoes: List[Dict[str, Union[str, float]]] = []
-
+    
+    # Método para adicionar uma operação ao cartão
     def adicionar_operacao(self, descricao: str, valor: float) -> None:
         operacao = {"descricao": descricao, "valor": valor}
         self.operacoes.append(operacao)
 
+    # Método para listar todas as operações do cartão
     def listar_operacoes(self) -> List[Dict[str, Union[str, float]]]:
         return self.operacoes
 
+    # Método para excluir uma operação específica com base na descrição
     def excluir_operacao(self, descricao: str) -> bool:
         for operacao in self.operacoes:
             if operacao['descricao'] == descricao:
@@ -22,11 +24,12 @@ class CartaoDeCredito:
         return False
 
 class GerenciadorCartaoDeCredito:
-    def __init__(self, arquivo_cartoes: str = "" ):
+    def __init__(self, arquivo_cartoes: str = ""):
         self.arquivo_cartoes = arquivo_cartoes
         self.cartoes: List[CartaoDeCredito] = []
         self.__carregar_cartoes()
 
+    # Método privado para adicionar um cartão ao gerenciador
     def __adicionar_cartao(self, numero_cartao: str, cpf: str, operacoes: List[Dict[str, Union[str, float]]] = None) -> None:
         if not self.cartao_existe(numero_cartao, cpf):
             cc = CartaoDeCredito(numero_cartao, cpf)
@@ -37,6 +40,7 @@ class GerenciadorCartaoDeCredito:
         else:
             print(f"Cartão {numero_cartao} já existe.")
 
+    # Método privado para carregar os cartões a partir de um arquivo
     def __carregar_cartoes(self) -> None:
         try:
             with open(self.arquivo_cartoes, 'r') as file:
@@ -58,6 +62,7 @@ class GerenciadorCartaoDeCredito:
         except Exception as e:
             print(f"Erro ao carregar cartões: {e}")
 
+    # Método para atualizar o arquivo com as informações dos cartões
     def atualizar_arquivo(self) -> None:
         try:
             with open(self.arquivo_cartoes, 'w') as file:
@@ -72,6 +77,7 @@ class GerenciadorCartaoDeCredito:
         except Exception as e:
             print(f"Erro ao atualizar o arquivo: {e}")
 
+    # Método para adicionar uma operação a um cartão específico
     def adicionar_operacao(self, numero_cartao: str, cpf: str, descricao: str, valor: float) -> bool:
         for cartao in self.cartoes:
             if cartao.numero == numero_cartao and cartao.cpf == cpf:
@@ -82,6 +88,7 @@ class GerenciadorCartaoDeCredito:
         print(f"Cartão {numero_cartao} não encontrado.")
         return False
 
+    # Método para excluir uma operação de um cartão específico
     def excluir_operacao(self, numero_cartao: str, cpf: str, descricao: str) -> bool:
         for cartao in self.cartoes:
             if cartao.numero == numero_cartao and cartao.cpf == cpf:
@@ -92,6 +99,7 @@ class GerenciadorCartaoDeCredito:
         print("Não excluiu")
         return False
 
+    # Método para listar todas as operações de um cartão específico
     def listar_operacoes(self, numero_cartao: str) -> List[Dict[str, Union[str, float]]]:
         for cartao in self.cartoes:
             if cartao.numero == numero_cartao:
@@ -99,15 +107,17 @@ class GerenciadorCartaoDeCredito:
         print(f"Cartão {numero_cartao} não encontrado.")
         return []
 
+    # Método para listar todos os cartões
     def listar_cartoes(self) -> List[str]:
         return [cartao.numero for cartao in self.cartoes]
 
+    # Método para listar todos os cartões associados a um CPF específico
     def listar_cartoes_por_cpf(self, cpf: str) -> List[str]:
         return [cartao.numero for cartao in self.cartoes if cartao.cpf == cpf]
 
+    # Método para verificar se um cartão existe
     def cartao_existe(self, numero_cartao: str, cpf: str) -> bool:
         return any(cartao.numero == numero_cartao and cartao.cpf == cpf for cartao in self.cartoes)
-
 
 if __name__ == "__main__":
     ccmanager = GerenciadorCartaoDeCredito("dados/cartão_de_credito.txt")
