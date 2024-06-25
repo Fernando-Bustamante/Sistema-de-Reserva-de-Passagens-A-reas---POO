@@ -91,7 +91,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     CCM = GerenciadorCartaoDeCredito("dados/cartão_de_credito.txt")
     UM = UsuarioManager("dados/usuarios.txt", CCM)
-    gv = gerenciador_voos(root, UM, CCM)
+    gv = gerenciador_voos(root, UM)
     gv.to_dict()
     
     # Simula a compra de passagem chamando o método comprar_passagem no avião específico
