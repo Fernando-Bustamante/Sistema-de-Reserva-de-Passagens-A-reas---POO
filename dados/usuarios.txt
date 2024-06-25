@@ -1,3 +1,4 @@
-Eduardo Souza;11605124770;01/01/1990;eduardo@example.com;Rua ABC, 123,centro,Linhares,ES;(11) 99999-9994;4111 1111 1111 1111;1234;2
-GOL1234;01/10/2024;14:30;Airbus320;A12;São Paulo;SP;Rio de Janeiro;RJ;12;C
+Eduardo Souza;11605124770;01/01/1990;eduardo@example.com;Rua ABC, 123,centro,Linhares,ES;(11) 99999-9994;4111 1111 1111 1111;1234;3
+GOL1234;01/10/2024;14:30;Airbus320;A12;Sao Paulo;SP;Rio de Janeiro;RJ;12;C
 AZU9101;01/10/2024;17:45;Airbus320;C7;Porto Alegre;RS;Curitiba;PR;3;A
+TAM6666;04/10/2024;13:00;Boeing777;E3;Belo Horizonte;MG;Salvador;BA;4;A
