@@ -4,8 +4,7 @@
 import tkinter as tk  
 from usuarios import UsuarioManager, Usuario, Passagem  
 from typing import List, Dict  
-from cartao_credito import GerenciadorCartaoDeCredito  
-from aviões.Airbus320 import Airbus320  
+from cartao_credito import GerenciadorCartaoDeCredito   
 from tkinter import messagebox  
 from tkinter import font as tkfont  
 from voo import gerenciador_voos  
