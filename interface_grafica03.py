@@ -374,7 +374,7 @@ class Display:
         result = tk.messagebox.askquestion("Cancelamento", "Você realmente deseja cancelar essa passagem?")
         if result == 'yes':
             self.UManager.excluir_passagem(self.__usuario.cpf, self.__usuario.cartao_credito, inf)
-            self.FManager.autualizar_voo()
+            self.FManager.atualizar_voo()
             self.set_main()  # Vai para a interface principal
     
     def set_comprar_passagem(self) -> None:
