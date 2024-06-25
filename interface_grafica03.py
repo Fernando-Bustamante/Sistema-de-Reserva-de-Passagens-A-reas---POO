@@ -255,6 +255,7 @@ class Display:
             self.__user['nome'] = self.reg_e1.get()
             self.__user['cpf'] = self.reg_e2.get()
             self.__user['senha'] = self.reg_e8.get()
+            self.UManager.atualizar_arquivo_usuarios()
             self.textmain.set(self.__user['nome'] + ", o que deseja fazer agora?")
             self.set_main()  # Vai para a interface principal
     
