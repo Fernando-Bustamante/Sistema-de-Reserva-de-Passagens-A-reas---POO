@@ -8,10 +8,9 @@ from cartao_credito import GerenciadorCartaoDeCredito
 from usuarios import UsuarioManager
 
 class gerenciador_voos:
-    def __init__(self, root: tk.Tk, UM: UsuarioManager = UsuarioManager(), CCM: GerenciadorCartaoDeCredito = GerenciadorCartaoDeCredito()):
+    def __init__(self, root: tk.Tk, UM: UsuarioManager = UsuarioManager()):
         # Inicializa uma instância da classe gerenciador_voos
         self.root = root
-        self.CCM = CCM
         self.UM = UM
         self.__voos: List[Dict[str, Union[Dict[str, str], List[str]]]] = []   
         self.__carregar__voos("dados/voos.txt")
