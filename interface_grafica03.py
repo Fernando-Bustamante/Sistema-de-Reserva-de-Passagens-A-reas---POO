@@ -443,7 +443,7 @@ class Display:
                 assento = seat.split(',')
                 p = Passagem(codigo_voo=info['codigo_voo'], data=info['data'], horario=info['horario'], modelo_aviao=info['modelo_aviao'], portao_embarque=info['portao_embarque'], cidade_origem=info['cidade_origem'], estado_origem=info['estado_origem'], cidade_destino=info['cidade_destino'], estado_destino=info['estado_destino'], assentox=assento[0], assentoy=assento[1])
                 self.UManager.adicionar_passagem(self.__user['cpf'], p, info['valor'])
-                self.FManager.autualizar_voo()
+                self.FManager.atualizar_voo()
                 self.set_main()  # Vai para a interface principal
                 self.UManager.atualizar_arquivo_usuarios()
             else:
