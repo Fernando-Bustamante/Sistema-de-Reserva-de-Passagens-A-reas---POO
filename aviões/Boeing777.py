@@ -5,29 +5,35 @@ Created on Mon Jun 17 20:26:32 2024
 @author: Eduardo
 """
 
-
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from typing import List, Optional
-from aviao import aviao
+from aviao import aviao  
 
 class Boeing777:
     def __init__(self, root: tk.Tk):
+        """
+        Inicializa a janela principal e carrega a imagem do assento.
+
+        Args:
+        - root (tk.Tk): Instância principal do tkinter.
+        """
         self.root: tk.Tk = root
         self.root.title("Seleção de Assento de Avião")
         self.canvas: Optional[tk.Canvas] = None
         self.photo: Optional[ImageTk.PhotoImage] = None
-        self.load_image()
-        
-        
+        self.load_image()  # Carrega a imagem do assento
+
     def load_image(self):
-        # Carregando a imagem da cadeira e redimensionando
+        """
+        Carrega a imagem do assento e redimensiona conforme necessário.
+        """
         image_path: str = "Images/Assento.png"
         image: Image.Image = Image.open(image_path)
 
-        # Redimensionar a imagem para caber 30 fileiras na tela
-        new_height: int = 20  # altura desejada para cada cadeira
+        # Redimensiona a imagem para a altura desejada (20 pixels para cada cadeira)
+        new_height: int = 20
         aspect_ratio: float = image.width / image.height
         new_width: int = int(new_height * aspect_ratio)
         image = image.resize((new_width, new_height), Image.LANCZOS)
@@ -48,9 +54,19 @@ class Boeing777:
         self.canvas_height: int = self.num_rows * self.image_height + 20  # +20 para espaço para os títulos das colunas
 
     def on_seat_click(self, row: int, col_title: str) -> None:
+        """
+        Função chamada quando um assento é clicado.
+
+        Args:
+        - row (int): Número da fileira do assento clicado.
+        - col_title (str): Título da coluna (assento) do assento clicado.
+        """
         messagebox.showinfo("Seleção", f"Você selecionou o assento da fileira {row}, coluna {col_title}!")
 
     def create_plane_widget(self) -> None:
+        """
+        Cria o widget do avião no canvas.
+        """
         # Criando o Canvas com o tamanho calculado
         self.canvas = tk.Canvas(self.root, width=self.canvas_width, height=self.canvas_height)
         self.canvas.pack(pady=20)
@@ -85,27 +101,31 @@ class Boeing777:
             current_col += section + 1  # Pula para a próxima seção, adicionando um espaço
 
     def destroy_plane_widget(self) -> None:
+        """
+        Destroi o widget do avião no canvas.
+        """
         if self.canvas:
             self.canvas.destroy()
             self.canvas = None
-
 
 if __name__ == "__main__":
     root = tk.Tk()
 
     plane = Boeing777(root)
 
-    # Create and pack the plane widget
+    # Função para criar o widget do avião
     def create() -> None:
         plane.create_plane_widget()
 
-    # Destroy the plane widget
+    # Função para destruir o widget do avião
     def destroy() -> None:
         plane.destroy_plane_widget()
 
+    # Botão para criar o avião
     create_button = tk.Button(root, text="Create Plane", command=create)
     create_button.pack(side=tk.LEFT, padx=10, pady=10)
 
+    # Botão para destruir o avião
     destroy_button = tk.Button(root, text="Destroy Plane", command=destroy)
     destroy_button.pack(side=tk.RIGHT, padx=10, pady=10)
 
