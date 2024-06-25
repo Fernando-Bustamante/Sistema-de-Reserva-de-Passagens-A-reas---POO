@@ -8,10 +8,9 @@ from cartao_credito import GerenciadorCartaoDeCredito
 from usuarios import UsuarioManager
 
 class gerenciador_voos:
-    def __init__(self, root: tk.Tk, UM: UsuarioManager = UsuarioManager(), CCM: GerenciadorCartaoDeCredito = GerenciadorCartaoDeCredito()):
+    def __init__(self, root: tk.Tk, UM: UsuarioManager = UsuarioManager()):
         # Inicializa uma instância da classe gerenciador_voos
         self.root = root
-        self.CCM = CCM
         self.UM = UM
         self.__voos: List[Dict[str, Union[Dict[str, str], List[str]]]] = []   
         self.__carregar__voos("dados/voos.txt")
@@ -92,7 +91,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     CCM = GerenciadorCartaoDeCredito("dados/cartão_de_credito.txt")
     UM = UsuarioManager("dados/usuarios.txt", CCM)
-    gv = gerenciador_voos(root, UM, CCM)
+    gv = gerenciador_voos(root, UM)
     gv.to_dict()
     
     # Simula a compra de passagem chamando o método comprar_passagem no avião específico
